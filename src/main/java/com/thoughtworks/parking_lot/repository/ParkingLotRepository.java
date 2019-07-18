@@ -12,9 +12,13 @@ public interface ParkingLotRepository extends JpaRepository<ParkingLot, Long>{
 
     ParkingLot removeParkingLot(Long parkinglotId);
 
-    List<ParkingLot> findAllParkingLots(Integer page, Integer pageSize);
+    List<ParkingLot> findAllParkingLots();
 
     ParkingLot findParkingLotById(Long parkinglotId);
 
     ParkingLot updateParkingLotById(Long parkinglotId, ParkingLot parkingLot);
+
+    ParkingLot addParkingLot(ParkingLot parkingLot);
+
+    List<ParkingLot> listParkingLotsByPage(Integer page, Integer pageSize);
 }

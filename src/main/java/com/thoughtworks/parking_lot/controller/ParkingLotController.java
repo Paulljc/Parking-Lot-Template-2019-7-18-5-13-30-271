@@ -21,8 +21,13 @@ public class ParkingLotController {
     }
 
     @GetMapping()
-    public List<ParkingLot> listAllParkingLots(Integer page, Integer pageSize){
-        return parkingLotService.findAllParkingLots(page, pageSize);
+    public List<ParkingLot> listAllParkingLots(){
+        return parkingLotService.findAllParkingLots();
+    }
+
+    @GetMapping(params = {"page"})
+    public List<ParkingLot> listParkingLotsByPage(@RequestParam("page")Integer page){
+        return parkingLotService.listParkingLotsByPage(page - 1, 15);
     }
 
     @GetMapping("/{parkinglotId}")
@@ -31,7 +36,12 @@ public class ParkingLotController {
     }
 
     @PutMapping()
-    public ParkingLot updateParkingLotById(@PathVariable Long parkinglotId, ParkingLot parkingLot){
+    public ParkingLot updateParkingLotById(@PathVariable Long parkinglotId, @RequestBody ParkingLot parkingLot){
         return parkingLotService.updateParkingLotById(parkinglotId, parkingLot);
+    }
+
+    @PostMapping()
+    public ParkingLot addParkingLot(@RequestBody ParkingLot parkingLot){
+        return parkingLotService.addParkingLot(parkingLot);
     }
 }

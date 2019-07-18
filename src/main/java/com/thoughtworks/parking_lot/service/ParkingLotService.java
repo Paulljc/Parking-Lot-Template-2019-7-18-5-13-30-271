@@ -18,8 +18,8 @@ public class ParkingLotService {
         return parkingLotRepository.removeParkingLot(parkinglotId);
     }
 
-    public List<ParkingLot> findAllParkingLots(Integer page, Integer pageSize) {
-        return parkingLotRepository.findAllParkingLots(page, pageSize);
+    public List<ParkingLot> findAllParkingLots() {
+        return parkingLotRepository.findAllParkingLots();
     }
 
     public ParkingLot findParkingLotById(Long parkinglotId) {
@@ -28,5 +28,13 @@ public class ParkingLotService {
 
     public ParkingLot updateParkingLotById(Long parkinglotId, ParkingLot parkingLot) {
         return parkingLotRepository.updateParkingLotById(parkinglotId, parkingLot);
+    }
+
+    public ParkingLot addParkingLot(ParkingLot parkingLot) {
+        return parkingLotRepository.addParkingLot(parkingLot);
+    }
+
+    public List<ParkingLot> listParkingLotsByPage(Integer page, Integer pageSize) {
+        return parkingLotRepository.listParkingLotsByPage(page, pageSize);
     }
 }

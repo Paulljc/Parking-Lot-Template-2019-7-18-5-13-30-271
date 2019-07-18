@@ -16,12 +16,24 @@ public class ParkingLot {
     @Column(nullable = false)
     private String location;
 
+    @Column(nullable = false)
+    private int capacity;
+
+    public ParkingLot(String name, String location, int capacity) {
+        this.name = name;
+        this.location = location;
+        this.capacity = capacity;
+    }
+
     public ParkingLot() {
     }
 
-    public ParkingLot(String name, String location) {
-        this.name = name;
-        this.location = location;
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 
     public Long getId() {

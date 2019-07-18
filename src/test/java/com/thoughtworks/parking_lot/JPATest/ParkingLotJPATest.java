@@ -29,7 +29,7 @@ public class ParkingLotJPATest {
 
     @Test
     public void should_return_parkinglot_when_add_parkinglot() {
-        ParkingLot parkingLot = new ParkingLot("oocl", "zha");
+        ParkingLot parkingLot = new ParkingLot("oocl", "zha", 10);
         ParkingLot parkingLotInDB  = parkingLotRepository.saveAndFlush(parkingLot);
 
         Assertions.assertEquals(parkingLot, parkingLotInDB);
@@ -37,7 +37,7 @@ public class ParkingLotJPATest {
 
     @Test
     public void should_return_parkinglot_when_find_parkinglot_by_id() {
-        ParkingLot parkingLot = new ParkingLot("oocl", "zha");
+        ParkingLot parkingLot = new ParkingLot("oocl", "zha", 10);
 
         ParkingLot parkingLotInDB = parkingLotRepository.saveAndFlush(parkingLot);
         parkingLotInDB = parkingLotRepository.findById(parkingLotInDB.getId()).get();
@@ -48,8 +48,8 @@ public class ParkingLotJPATest {
     @Test
     public void should_return_all_parkinglot_when_find_all_parkinglots() {
         List<ParkingLot> parkingLots = Arrays.asList(
-                new ParkingLot("park1", "zha"),
-                new ParkingLot("park2", "zha")
+                new ParkingLot("park1", "zha", 10),
+                new ParkingLot("park2", "zha", 10)
         );
 
         parkingLotRepository.saveAll(parkingLots);
@@ -62,7 +62,7 @@ public class ParkingLotJPATest {
 
     @Test
     public void should_return_parkinglot_when_update_parkinglot() {
-        ParkingLot parkingLot = new ParkingLot("oocl", "zha");
+        ParkingLot parkingLot = new ParkingLot("oocl", "zha", 10);
         parkingLotRepository.saveAndFlush(parkingLot);
 
         parkingLot.setName("ookl");
@@ -75,8 +75,8 @@ public class ParkingLotJPATest {
 
     @Test
     public void should_return_parkinglot_when_delete_parkinglot_by_id() {
-        ParkingLot parkingLot1 = new ParkingLot("oocl", "zha");
-        ParkingLot parkingLot2 = new ParkingLot("oohl", "zha");
+        ParkingLot parkingLot1 = new ParkingLot("oocl", "zha", 10);
+        ParkingLot parkingLot2 = new ParkingLot("oohl", "zha", 10);
         parkingLotRepository.save(parkingLot1);
         parkingLotRepository.save(parkingLot2);
 
