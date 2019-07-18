@@ -9,6 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ParkOrderRepository extends JpaRepository<ParkingLot, Long> {
     ParkOrder parkCar(Car car);
-
     Car fetchCar(ParkOrder parkingOrder);
 }
