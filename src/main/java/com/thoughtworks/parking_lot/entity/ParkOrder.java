@@ -8,21 +8,19 @@ import java.util.List;
 @Entity
 @Table(name = "park_order")
 public class ParkOrder {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "car_lisence", nullable = false)
-    private Car car;
+    @Column(nullable = false)
+    private String carLisence;
 
-    @ManyToOne
-    @JoinColumn(name = "parkinglot_id", nullable = false)
+    @Column(nullable = false)
+    private String parkingLotName;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "parking_lot_id")
     private ParkingLot parkingLot;
-
-    @NotNull
-    private String orderNumber;
 
     @NotNull
     private Date parkStartAt;
@@ -31,15 +29,15 @@ public class ParkOrder {
     private Date parkEndAt;
 
     @NotNull
-    private Boolean orderStatus;
+    private Boolean status;
 
-    public ParkOrder(Car car, ParkingLot parkingLot, @NotNull String orderNumber, @NotNull Date parkStartAt, @NotNull Date parkEndAt, @NotNull Boolean orderStatus) {
-        this.car = car;
+    public ParkOrder(String carLisence, String parkingLotName, ParkingLot parkingLot, @NotNull Date parkStartAt, @NotNull Date parkEndAt, @NotNull Boolean status) {
+        this.carLisence = carLisence;
+        this.parkingLotName = parkingLotName;
         this.parkingLot = parkingLot;
-        this.orderNumber = orderNumber;
         this.parkStartAt = parkStartAt;
         this.parkEndAt = parkEndAt;
-        this.orderStatus = orderStatus;
+        this.status = status;
     }
 
     public Long getId() {
@@ -50,12 +48,20 @@ public class ParkOrder {
         this.id = id;
     }
 
-    public Car getCar() {
-        return car;
+    public String getCarLisence() {
+        return carLisence;
     }
 
-    public void setCar(Car car) {
-        this.car = car;
+    public void setCarLisence(String carLisence) {
+        this.carLisence = carLisence;
+    }
+
+    public String getParkingLotName() {
+        return parkingLotName;
+    }
+
+    public void setParkingLotName(String parkingLotName) {
+        this.parkingLotName = parkingLotName;
     }
 
     public ParkingLot getParkingLot() {
@@ -64,14 +70,6 @@ public class ParkOrder {
 
     public void setParkingLot(ParkingLot parkingLot) {
         this.parkingLot = parkingLot;
-    }
-
-    public String getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(String orderNumber) {
-        this.orderNumber = orderNumber;
     }
 
     public Date getParkStartAt() {
@@ -90,11 +88,11 @@ public class ParkOrder {
         this.parkEndAt = parkEndAt;
     }
 
-    public Boolean getOrderStatus() {
-        return orderStatus;
+    public Boolean getStatus() {
+        return status;
     }
 
-    public void setOrderStatus(Boolean orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 }

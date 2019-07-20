@@ -4,7 +4,6 @@ package com.thoughtworks.parking_lot.MVCTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.parking_lot.controller.ParkingLotController;
 import com.thoughtworks.parking_lot.entity.ParkingLot;
-import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import com.thoughtworks.parking_lot.service.ParkingLotService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,6 +20,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
@@ -40,61 +40,45 @@ public class ParkingLotControllerTest {
     private ParkingLotService parkingLotService;
 
     @Test
-    public void should_return_parkinglots_when_find_all_parkinglots() throws Exception {
-        List<ParkingLot> parkingLots = Arrays.asList(
-                new ParkingLot("park1", "zha", 10),
-                new ParkingLot("park2", "zha", 10)
-        );
-
-        when(parkingLotService.findAllParkingLots()).thenReturn(parkingLots);
-
-        ResultActions result = mvc.perform(get("/parkinglots"));
-
-        result.andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name", is("park1")))
-                .andExpect(jsonPath("$[0].location", is("zha")))
-                .andExpect(jsonPath("$[1].name", is("park2")))
-                .andExpect(jsonPath("$[1].location", is("zha")));
-    }
-
-    @Test
     public void should_return_parkinglots_when_find_parkinglots_by_page() throws Exception {
         List<ParkingLot> parkingLots = Arrays.asList(
                 new ParkingLot("park1", "zha", 10),
                 new ParkingLot("park2", "zha", 10)
         );
 
-        when(parkingLotService.findAllParkingLots()).thenReturn(parkingLots);
+        when(parkingLotService.findParkingLotsByPage(anyInt())).thenReturn(parkingLots);
 
-        ResultActions result = mvc.perform(get("/parkinglots"));
+        ResultActions result = mvc.perform(get("/parkinglots").param("page", "2"));
 
         result.andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].name", is("park1")))
-                .andExpect(jsonPath("$[0].location", is("zha")));
+                .andExpect(jsonPath("$[1].name", is("park2")));
     }
 
     @Test
     public void should_return_parkinglot_when_find_parkinglot_by_id() throws Exception {
         ParkingLot parkingLot = new ParkingLot("park1", "zha", 10);
 
-
         when(parkingLotService.findParkingLotById(anyLong())).thenReturn(parkingLot);
 
-        ResultActions result = mvc.perform(get("/parkinglots/{parkinglotId}", parkingLot.getId()));
+        ResultActions result = mvc.perform(get("/parkinglots/{parkinglotId}", 1));
 
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("park1")))
                 .andExpect(jsonPath("$.location", is("zha")));
+        verify(parkingLotService).findParkingLotById((long) 1);
     }
 
     @Test
     public void should_return_parkinglot_when_update_parkinglot_by_id() throws Exception {
         ParkingLot parkingLot = new ParkingLot("park1", "zha", 10);
-        String json = new ObjectMapper().writeValueAsString(parkingLot);
 
         when(parkingLotService.updateParkingLotById(anyLong(), any())).thenReturn(parkingLot);
 
-        ResultActions result = mvc.perform(put("/parkinglots", parkingLot.getId()).contentType(MediaType.APPLICATION_JSON).content(json));
+        ResultActions result = mvc.perform(put("/parkinglots", parkingLot.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(parkingLot)));
 
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("park1")))
@@ -104,32 +88,26 @@ public class ParkingLotControllerTest {
 
     @Test
     public void should_return_parkinglot_when_delete_parkinglot_by_id() throws Exception {
-        ParkingLot parkingLot = new ParkingLot("park1", "zha", 10);
 
+        ResultActions result = mvc.perform(delete("/parkinglots/{parkingLotId}", 1));
 
-        when(parkingLotService.removeParkingLot(anyLong())).thenReturn(parkingLot);
-
-        ResultActions result = mvc.perform(delete("/parkinglots", parkingLot.getId()));
-
-        result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("park1")))
-                .andExpect(jsonPath("$.location", is("zha")));
+        result.andExpect(status().isNoContent());
+        verify(parkingLotService).removeParkingLot((long) 1);
     }
 
     @Test
-    void should_return_parkinglot_when_add_parking_lot() throws Exception {
-        ParkingLot parkingLot = new ParkingLot("park1", "zha", 10);
+    void should_return_parkinglot_when_add_parkinglot() throws Exception {
+        ParkingLot parkingLot = new ParkingLot("park1", "zha", 1);
 
-        String json = new ObjectMapper().writeValueAsString(parkingLot);
+        when(parkingLotService.addParkingLot(any())).thenReturn(parkingLot);
 
         ResultActions result = mvc.perform(post("/parkinglots")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(json)
+                .content(new ObjectMapper().writeValueAsString(parkingLot))
         );
 
-        result.andExpect(status().isOk());
-        ArgumentCaptor<ParkingLot> argumentCaptor = ArgumentCaptor.forClass(ParkingLot.class);
-        verify(parkingLotService).addParkingLot(argumentCaptor.capture());
-        Assertions.assertEquals(parkingLot, argumentCaptor.getValue());
+        result.andExpect(status().isOk()).andExpect(jsonPath("$.name", is("park1")))
+                .andExpect(jsonPath("$.location", is("zha")))
+                .andExpect(jsonPath("$.capacity", is(1)));
     }
 }

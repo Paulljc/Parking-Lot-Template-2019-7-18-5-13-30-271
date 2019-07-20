@@ -3,7 +3,8 @@ package com.thoughtworks.parking_lot.controller;
 import com.thoughtworks.parking_lot.entity.ParkingLot;
 import com.thoughtworks.parking_lot.service.ParkingLotService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,33 +16,49 @@ public class ParkingLotController {
     @Autowired
     ParkingLotService parkingLotService;
 
-    @DeleteMapping("/{parkinglotId}")
-    public ParkingLot removeParkingLot(@PathVariable Long parkinglotId){
-        return parkingLotService.removeParkingLot(parkinglotId);
+    @DeleteMapping("/{parkingLotId}")
+    public ResponseEntity removeParkingLot(@PathVariable Long parkingLotId){
+        try {
+            parkingLotService.removeParkingLot(parkingLotId);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity(e.toString(),HttpStatus.CONFLICT);
+        }
     }
 
     @GetMapping()
-    public List<ParkingLot> listAllParkingLots(){
-        return parkingLotService.findAllParkingLots();
+    public ResponseEntity findParkingLotsByPage(@RequestParam("page")Integer page){
+        try {
+            return new ResponseEntity(parkingLotService.findParkingLotsByPage(page), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(e.toString(), HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @GetMapping(params = {"page"})
-    public List<ParkingLot> listParkingLotsByPage(@RequestParam("page")Integer page){
-        return parkingLotService.listParkingLotsByPage(page - 1, 15);
+    @GetMapping("/{parkingLotId}")
+    public ResponseEntity findParkingLotById(@PathVariable Long parkingLotId){
+        try {
+            return new ResponseEntity(parkingLotService.findParkingLotById(parkingLotId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(e.toString(), HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @GetMapping("/{parkinglotId}")
-    public ParkingLot listParkingLotById(@PathVariable Long parkinglotId){
-        return parkingLotService.findParkingLotById(parkinglotId);
-    }
-
-    @PutMapping()
-    public ParkingLot updateParkingLotById(@PathVariable Long parkinglotId, @RequestBody ParkingLot parkingLot){
-        return parkingLotService.updateParkingLotById(parkinglotId, parkingLot);
+    @PutMapping("/{parkingLotId}")
+    public ResponseEntity updateParkingLotById(@PathVariable Long parkingLotId, @RequestBody ParkingLot parkingLot){
+        try {
+            return new ResponseEntity(parkingLotService.updateParkingLotById(parkingLotId, parkingLot), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(e.toString(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping()
-    public ParkingLot addParkingLot(@RequestBody ParkingLot parkingLot){
-        return parkingLotService.addParkingLot(parkingLot);
+    public ResponseEntity addParkingLot(@RequestBody ParkingLot parkingLot){
+        try {
+            return new ResponseEntity(parkingLotService.addParkingLot(parkingLot), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(e.toString(), HttpStatus.BAD_REQUEST);
+        }
     }
 }
